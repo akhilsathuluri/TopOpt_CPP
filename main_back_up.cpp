@@ -121,9 +121,9 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
   double c = 0;
   MatrixXd dc = MatrixXd::Constant(nely, nelx, 0);
   MatrixXd dv = MatrixXd::Ones(nely, nelx);
-  while (change > 0.01) {
-    loop++;
-    // FE analysis
+  // while (change > 0.01) {
+  //   loop++;
+  //   // FE analysis
   //   Ex = (Emin+(xPhys.array().pow(penal)*(E0-Emin))).matrix();
   //   VectorXd vEx(Map<VectorXd>(Ex.data(), Ex.cols()*Ex.rows()));
   //   sK = vKE*vEx.transpose();
@@ -155,73 +155,73 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
   //   dc = H*((dc.array()/Hs.array()).matrix());
   //   dv = H*((dv.array()/Hs.array()).matrix());
   // }
+  // }
   // UNCOMMENT FROM HERE TO WRITE LOOP CODE
-    Ex = (Emin+(xPhys.array().pow(penal)*(E0-Emin))).matrix();
-    VectorXd vEx(Map<VectorXd>(Ex.data(), Ex.cols()*Ex.rows()));
-    sK = vKE*vEx.transpose();
-    VectorXd vsK(Map<VectorXd>(sK.data(), sK.cols()*sK.rows()));
-    for (size_t jj = 0; jj < iK.size(); jj++) {
-      K(iK(jj), jK(jj)) = sK(jj);
-    }
-    K = (K+K.transpose())/2;
-    // The following step needs Eigen 3.3.9 unstable update
-    U(freedof) = (K(freedof, freedof)).colPivHouseholderQr().solve(F(freedof));
-    // Objective function and sensitivity analysis
-    for (size_t ii = 0; ii < edofMat.rows(); ii++) {
-      ce(ii,0) = U(edofMat.row(ii)).transpose()*KE*U(edofMat.row(ii));
-    }
-    // Resize into a matrix
-    ce.resize(nely, nelx);
-    // The matrix Ex is already computed above
-    c = (Ex.array()*ce.array()).sum();
-    dc = (-penal*(E0-Emin)*xPhys.array().pow(penal-1))*ce.array();
-    dc.resize(nely*nelx,1);
-    dv.resize(nely*nelx,1);
-    // Filtering/Modification of sensitivities
+  Ex = (Emin+(xPhys.array().pow(penal)*(E0-Emin))).matrix();
+  VectorXd vEx(Map<VectorXd>(Ex.data(), Ex.cols()*Ex.rows()));
+  sK = vKE*vEx.transpose();
+  VectorXd vsK(Map<VectorXd>(sK.data(), sK.cols()*sK.rows()));
+  for (size_t jj = 0; jj < iK.size(); jj++) {
+    K(iK(jj), jK(jj)) = sK(jj);
+  }
+  K = (K+K.transpose())/2;
+  // The following step needs Eigen 3.3.9 unstable update
+  U(freedof) = (K(freedof, freedof)).colPivHouseholderQr().solve(F(freedof));
+  // Objective function and sensitivity analysis
+  for (size_t ii = 0; ii < edofMat.rows(); ii++) {
+    ce(ii,0) = U(edofMat.row(ii)).transpose()*KE*U(edofMat.row(ii));
+  }
+  // Resize into a matrix
+  ce.resize(nely, nelx);
+  // The matrix Ex is already computed above
+  c = (Ex.array()*ce.array()).sum();
+  dc = (-penal*(E0-Emin)*xPhys.array().pow(penal-1))*ce.array();
+  dc.resize(nely*nelx,1);
+  dv.resize(nely*nelx,1);
+  // Filtering/Modification of sensitivities
+  if (ft == 1) {
+    VectorXd vx(Map<VectorXd>(x.data(), x.cols()*x.rows()));
+    VectorXd mvx = vx;
+    // Removing zeros for division
+    mvx = (vx.array() < pow(10,-3)).select(pow(10,-3), vx);
+    dc = ((H*(vx.array()*dc.array()).matrix()).array())/Hs.array()/mvx.array();
+  }
+  else if (ft == 2) {
+    dc = H*((dc.array()/Hs.array()).matrix());
+    dv = H*((dv.array()/Hs.array()).matrix());
+
+  }
+  // Resizing dc and dv back to normal
+  dc.resize(nely, nelx);
+  dv.resize(nely, nelx);
+  // Optimality criteria update of design variables
+  double l1 = 0, l2 = pow(10, -9), move = 0.2, lmid = 0;
+  while ((l2-l1)/(l1+l2) > pow(10, -3)) {
+    std::cout<<"lmid"<<std::endl;
+    lmid = 0.5*(l1+l2);
+    xnew = (ArrayXXd::Zero(nely, nelx)).max((x.array()-move).max((ArrayXXd::Ones(nely, nelx)).min((x.array()+move).min(x.array()*(-dc.array()/dv.array()/lmid).sqrt()))));
     if (ft == 1) {
-      VectorXd vx(Map<VectorXd>(x.data(), x.cols()*x.rows()));
-      VectorXd mvx = vx;
-      // Removing zeros for division
-      mvx = (vx.array() < pow(10,-3)).select(pow(10,-3), vx);
-      dc = ((H*(vx.array()*dc.array()).matrix()).array())/Hs.array()/mvx.array();
+      xPhys = xnew;
     }
     else if (ft == 2) {
-      dc = H*((dc.array()/Hs.array()).matrix());
-      dv = H*((dv.array()/Hs.array()).matrix());
-
+      xnew.resize(nely*nelx,1);
+      xPhys.resize(nely*nelx,1);
+      xPhys = (H*xnew).array()/Hs.array();
+      xnew.resize(nely, nelx);
+      xPhys.resize(nely, nelx);
     }
-    // Resizing dc and dv back to normal
-    dc.resize(nely, nelx);
-    dv.resize(nely, nelx);
-    // Optimality criteria update of design variables
-    double l1 = 0, l2 = pow(10, -9), move = 0.2, lmid = 0;
-    while ((l2-l1)/(l1+l2) > pow(10, -3)) {
-      std::cout<<"lmid"<<std::endl;
-      lmid = 0.5*(l1+l2);
-      xnew = (ArrayXXd::Zero(nely, nelx)).max((x.array()-move).max((ArrayXXd::Ones(nely, nelx)).min((x.array()+move).min(x.array()*(-dc.array()/dv.array()/lmid).sqrt()))));
-      if (ft == 1) {
-        xPhys = xnew;
-      }
-      else if (ft == 2) {
-        xnew.resize(nely*nelx,1);
-        xPhys.resize(nely*nelx,1);
-        xPhys = (H*xnew).array()/Hs.array();
-        xnew.resize(nely, nelx);
-        xPhys.resize(nely, nelx);
-      }
-      if (xPhys.sum() > volfrac*nely*nelx) {
-        l1 = lmid;
-      }
-      else {
-        l2 = lmid;
-      }
+    if (xPhys.sum() > volfrac*nely*nelx) {
+      l1 = lmid;
     }
-    change = (xnew - x).array().abs().maxCoeff();
-    x = xnew;
-    // Print results
-    printf("It.:%5i Obj.:%11.4f Vol.:%7.3f ch.:%7.3f\n",loop, c, xPhys.mean(), change);
-    // std::cout << "----------" << std::endl;
-    // std::cout << x << std::endl;
+    else {
+      l2 = lmid;
+    }
   }
+  change = (xnew - x).array().abs().maxCoeff();
+  x = xnew;
+  // Print results
+  printf("It.:%5i Obj.:%11.4f Vol.:%7.3f ch.:%7.3f\n",loop, c, xPhys.mean(), change);
+  std::cout << "----------" << std::endl;
+  std::cout << x << std::endl;
   // Add plotting later
 }
