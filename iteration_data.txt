@@ -1,0 +1,221 @@
+>> top88(60,20,0.5,3,1.5,1)
+
+initial
+It.:    1 Obj.:-77073240.6025 Vol.:  0.700 ch.:  0.200
+transpose added
+It.:    1 Obj.:    12.9910 Vol.:  0.700 ch.:  0.200
+while loop l2=10^+9 change
+It.:    1 Obj.:    12.9910 Vol.:  0.630 ch.:  0.200
+
+
+ It.:    1 Obj.:  1007.0221 Vol.:  0.500 ch.:  0.200
+ It.:    2 Obj.:   579.4187 Vol.:  0.500 ch.:  0.200
+ It.:    3 Obj.:   412.4563 Vol.:  0.500 ch.:  0.200
+ It.:    4 Obj.:   343.7162 Vol.:  0.500 ch.:  0.200
+ It.:    5 Obj.:   322.0470 Vol.:  0.500 ch.:  0.193
+ It.:    6 Obj.:   308.7133 Vol.:  0.500 ch.:  0.200
+ It.:    7 Obj.:   298.1993 Vol.:  0.500 ch.:  0.170
+ It.:    8 Obj.:   288.7822 Vol.:  0.500 ch.:  0.191
+ It.:    9 Obj.:   280.3294 Vol.:  0.500 ch.:  0.132
+ It.:   10 Obj.:   272.8888 Vol.:  0.500 ch.:  0.129
+ It.:   11 Obj.:   265.4777 Vol.:  0.500 ch.:  0.161
+ It.:   12 Obj.:   257.2706 Vol.:  0.500 ch.:  0.167
+ It.:   13 Obj.:   248.4272 Vol.:  0.500 ch.:  0.168
+ It.:   14 Obj.:   239.5258 Vol.:  0.500 ch.:  0.190
+ It.:   15 Obj.:   232.1004 Vol.:  0.500 ch.:  0.194
+ It.:   16 Obj.:   226.8746 Vol.:  0.500 ch.:  0.186
+ It.:   17 Obj.:   222.7618 Vol.:  0.500 ch.:  0.188
+ It.:   18 Obj.:   219.1503 Vol.:  0.500 ch.:  0.143
+ It.:   19 Obj.:   215.6418 Vol.:  0.500 ch.:  0.156
+ It.:   20 Obj.:   212.3790 Vol.:  0.500 ch.:  0.118
+ It.:   21 Obj.:   209.8215 Vol.:  0.500 ch.:  0.093
+ It.:   22 Obj.:   208.2827 Vol.:  0.500 ch.:  0.090
+ It.:   23 Obj.:   207.4960 Vol.:  0.500 ch.:  0.100
+ It.:   24 Obj.:   206.6510 Vol.:  0.500 ch.:  0.107
+ It.:   25 Obj.:   206.1440 Vol.:  0.500 ch.:  0.103
+ It.:   26 Obj.:   205.5215 Vol.:  0.500 ch.:  0.060
+ It.:   27 Obj.:   205.2487 Vol.:  0.500 ch.:  0.042
+ It.:   28 Obj.:   205.1953 Vol.:  0.500 ch.:  0.040
+ It.:   29 Obj.:   205.1055 Vol.:  0.500 ch.:  0.038
+ It.:   30 Obj.:   205.0685 Vol.:  0.500 ch.:  0.039
+ It.:   31 Obj.:   204.9292 Vol.:  0.500 ch.:  0.040
+ It.:   32 Obj.:   204.7949 Vol.:  0.500 ch.:  0.040
+ It.:   33 Obj.:   204.7950 Vol.:  0.500 ch.:  0.042
+ It.:   34 Obj.:   204.6792 Vol.:  0.500 ch.:  0.046
+ It.:   35 Obj.:   204.5831 Vol.:  0.500 ch.:  0.048
+ It.:   36 Obj.:   204.3687 Vol.:  0.500 ch.:  0.043
+ It.:   37 Obj.:   204.3872 Vol.:  0.500 ch.:  0.039
+ It.:   38 Obj.:   204.3823 Vol.:  0.500 ch.:  0.037
+ It.:   39 Obj.:   204.2780 Vol.:  0.500 ch.:  0.035
+ It.:   40 Obj.:   204.2536 Vol.:  0.500 ch.:  0.032
+ It.:   41 Obj.:   204.3313 Vol.:  0.500 ch.:  0.031
+ It.:   42 Obj.:   204.1841 Vol.:  0.500 ch.:  0.028
+ It.:   43 Obj.:   204.1634 Vol.:  0.500 ch.:  0.025
+ It.:   44 Obj.:   204.2133 Vol.:  0.500 ch.:  0.024
+ It.:   45 Obj.:   204.1879 Vol.:  0.500 ch.:  0.022
+ It.:   46 Obj.:   204.1572 Vol.:  0.500 ch.:  0.022
+ It.:   47 Obj.:   204.0033 Vol.:  0.500 ch.:  0.024
+ It.:   48 Obj.:   204.0790 Vol.:  0.500 ch.:  0.022
+ It.:   49 Obj.:   204.0302 Vol.:  0.500 ch.:  0.021
+ It.:   50 Obj.:   203.9134 Vol.:  0.500 ch.:  0.021
+ It.:   51 Obj.:   203.8606 Vol.:  0.500 ch.:  0.022
+ It.:   52 Obj.:   203.9206 Vol.:  0.500 ch.:  0.020
+ It.:   53 Obj.:   203.8806 Vol.:  0.500 ch.:  0.019
+ It.:   54 Obj.:   203.7517 Vol.:  0.500 ch.:  0.019
+ It.:   55 Obj.:   203.8147 Vol.:  0.500 ch.:  0.018
+ It.:   56 Obj.:   203.7613 Vol.:  0.500 ch.:  0.016
+ It.:   57 Obj.:   203.6453 Vol.:  0.500 ch.:  0.016
+ It.:   58 Obj.:   203.7187 Vol.:  0.500 ch.:  0.015
+ It.:   59 Obj.:   203.6815 Vol.:  0.500 ch.:  0.013
+ It.:   60 Obj.:   203.5707 Vol.:  0.500 ch.:  0.012
+ It.:   61 Obj.:   203.5417 Vol.:  0.500 ch.:  0.012
+ It.:   62 Obj.:   203.6197 Vol.:  0.500 ch.:  0.011
+ It.:   63 Obj.:   203.6080 Vol.:  0.500 ch.:  0.012
+ It.:   64 Obj.:   203.5045 Vol.:  0.500 ch.:  0.012
+ It.:   65 Obj.:   203.4885 Vol.:  0.500 ch.:  0.014
+ It.:   66 Obj.:   203.5717 Vol.:  0.500 ch.:  0.015
+ It.:   67 Obj.:   203.4517 Vol.:  0.500 ch.:  0.016
+ It.:   68 Obj.:   203.4689 Vol.:  0.500 ch.:  0.017
+ It.:   69 Obj.:   203.4567 Vol.:  0.500 ch.:  0.020
+ It.:   70 Obj.:   203.3819 Vol.:  0.500 ch.:  0.021
+ It.:   71 Obj.:   203.3968 Vol.:  0.500 ch.:  0.022
+ It.:   72 Obj.:   203.4135 Vol.:  0.500 ch.:  0.021
+ It.:   73 Obj.:   203.4441 Vol.:  0.500 ch.:  0.022
+ It.:   74 Obj.:   203.3649 Vol.:  0.500 ch.:  0.020
+ It.:   75 Obj.:   203.3920 Vol.:  0.500 ch.:  0.020
+ It.:   76 Obj.:   203.3952 Vol.:  0.500 ch.:  0.019
+ It.:   77 Obj.:   203.3274 Vol.:  0.500 ch.:  0.018
+ It.:   78 Obj.:   203.3440 Vol.:  0.500 ch.:  0.018
+ It.:   79 Obj.:   203.3473 Vol.:  0.500 ch.:  0.017
+ It.:   80 Obj.:   203.3767 Vol.:  0.500 ch.:  0.016
+ It.:   81 Obj.:   203.2966 Vol.:  0.500 ch.:  0.017
+ It.:   82 Obj.:   203.3108 Vol.:  0.500 ch.:  0.016
+ It.:   83 Obj.:   203.2988 Vol.:  0.500 ch.:  0.016
+ It.:   84 Obj.:   203.3111 Vol.:  0.500 ch.:  0.016
+ It.:   85 Obj.:   203.3143 Vol.:  0.500 ch.:  0.015
+ It.:   86 Obj.:   203.2256 Vol.:  0.500 ch.:  0.015
+ It.:   87 Obj.:   203.2267 Vol.:  0.500 ch.:  0.015
+ It.:   88 Obj.:   203.3134 Vol.:  0.500 ch.:  0.013
+ It.:   89 Obj.:   203.2206 Vol.:  0.500 ch.:  0.012
+ It.:   90 Obj.:   203.2337 Vol.:  0.500 ch.:  0.012
+ It.:   91 Obj.:   203.2081 Vol.:  0.500 ch.:  0.011
+ It.:   92 Obj.:   203.2103 Vol.:  0.500 ch.:  0.011
+ It.:   93 Obj.:   203.1951 Vol.:  0.500 ch.:  0.010
+ It.:   94 Obj.:   203.1925 Vol.:  0.500 ch.:  0.010
+
+
+
+%%%% AN 88 LINE TOPOLOGY OPTIMIZATION CODE Nov, 2010 %%%%
+function top88(nelx,nely,volfrac,penal,rmin,ft)
+%% MATERIAL PROPERTIES
+E0 = 1;
+Emin = 1e-9;
+nu = 0.3;
+%% PREPARE FINITE ELEMENT ANALYSIS
+A11 = [12  3 -6 -3;  3 12  3  0; -6  3 12 -3; -3  0 -3 12];
+A12 = [-6 -3  0  3; -3 -6 -3 -6;  0 -3 -6  3;  3 -6  3 -6];
+B11 = [-4  3 -2  9;  3 -4 -9  4; -2 -9 -4 -3;  9  4 -3 -4];
+B12 = [ 2 -3  4 -9; -3  2  9 -2;  4  9  2  3; -9 -2  3  2];
+KE = 1/(1-nu^2)/24*([A11 A12;A12' A11]+nu*[B11 B12;B12' B11]);
+nodenrs = reshape(1:(1+nelx)*(1+nely),1+nely,1+nelx);
+edofVec = reshape(2*nodenrs(1:end-1,1:end-1)+1,nelx*nely,1);
+edofMat = repmat(edofVec,1,8)+repmat([0 1 2*nely+[2 3 0 1] -2 -1],nelx*nely,1);
+iK = reshape(kron(edofMat,ones(8,1))',64*nelx*nely,1);
+jK = reshape(kron(edofMat,ones(1,8))',64*nelx*nely,1);
+% DEFINE LOADS AND SUPPORTS (HALF MBB-BEAM)
+F = sparse(2,1,-1,2*(nely+1)*(nelx+1),1);
+U = zeros(2*(nely+1)*(nelx+1),1);
+fixeddofs = union([1:2:2*(nely+1)],[2*(nelx+1)*(nely+1)]);
+alldofs = [1:2*(nely+1)*(nelx+1)];
+freedofs = setdiff(alldofs,fixeddofs);
+%% PREPARE FILTER
+iH = ones(nelx*nely*(2*(ceil(rmin)-1)+1)^2,1);
+jH = ones(size(iH));
+sH = zeros(size(iH));
+k = 0;
+for i1 = 1:nelx
+  for j1 = 1:nely
+    e1 = (i1-1)*nely+j1;
+    for i2 = max(i1-(ceil(rmin)-1),1):min(i1+(ceil(rmin)-1),nelx)
+      for j2 = max(j1-(ceil(rmin)-1),1):min(j1+(ceil(rmin)-1),nely)
+        e2 = (i2-1)*nely+j2;
+        k = k+1;
+        iH(k) = e1;
+        jH(k) = e2;
+        sH(k) = max(0,rmin-sqrt((i1-i2)^2+(j1-j2)^2));
+      end
+    end
+  end
+end
+H = sparse(iH,jH,sH);
+Hs = sum(H,2);
+%% INITIALIZE ITERATION
+x = repmat(volfrac,nely,nelx);
+xPhys = x;
+loop = 0;
+change = 1;
+%% START ITERATION
+while change > 0.01
+  loop = loop + 1;
+  %% FE-ANALYSIS
+  sK = reshape(KE(:)*(Emin+xPhys(:)'.^penal*(E0-Emin)),64*nelx*nely,1);
+  K = sparse(iK,jK,sK); K = (K+K')/2;
+  U(freedofs) = K(freedofs,freedofs)\F(freedofs);
+  %% OBJECTIVE FUNCTION AND SENSITIVITY ANALYSIS
+  ce = reshape(sum((U(edofMat)*KE).*U(edofMat),2),nely,nelx);
+  c = sum(sum((Emin+xPhys.^penal*(E0-Emin)).*ce));
+  dc = -penal*(E0-Emin)*xPhys.^(penal-1).*ce;
+  dv = ones(nely,nelx);
+  %% FILTERING/MODIFICATION OF SENSITIVITIES
+  if ft == 1
+    dc(:) = H*(x(:).*dc(:))./Hs./max(1e-3,x(:));
+  elseif ft == 2
+    dc(:) = H*(dc(:)./Hs);
+    dv(:) = H*(dv(:)./Hs);
+  end
+  %% OPTIMALITY CRITERIA UPDATE OF DESIGN VARIABLES AND PHYSICAL DENSITIES
+  l1 = 0; l2 = 1e9; move = 0.2;
+  while (l2-l1)/(l1+l2) > 1e-3
+    lmid = 0.5*(l2+l1);
+    xnew = max(0,max(x-move,min(1,min(x+move,x.*sqrt(-dc./dv/lmid)))));
+    if ft == 1
+      xPhys = xnew;
+    elseif ft == 2
+      xPhys(:) = (H*xnew(:))./Hs;
+    end
+    if sum(xPhys(:)) > volfrac*nelx*nely, l1 = lmid; else l2 = lmid; end
+  end
+  change = max(abs(xnew(:)-x(:)));
+  x = xnew;
+  %% PRINT RESULTS
+  fprintf(' It.:%5i Obj.:%11.4f Vol.:%7.3f ch.:%7.3f\n',loop,c, ...
+    mean(xPhys(:)),change);
+  %% PLOT DENSITIES
+  colormap(gray); imagesc(1-xPhys); caxis([0 1]); axis equal; axis off; drawnow;
+end
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This Matlab code was written by E. Andreassen, A. Clausen, M. Schevenels,%
+% B. S. Lazarov and O. Sigmund,  Department of Solid  Mechanics,           %
+%  Technical University of Denmark,                                        %
+%  DK-2800 Lyngby, Denmark.                                                %
+% Please sent your comments to: sigmund@fam.dtu.dk                         %
+%                                                                          %
+% The code is intended for educational purposes and theoretical details    %
+% are discussed in the paper                                               %
+% "Efficient topology optimization in MATLAB using 88 lines of code,       %
+% E. Andreassen, A. Clausen, M. Schevenels,                                %
+% B. S. Lazarov and O. Sigmund, Struct Multidisc Optim, 2010               %
+% This version is based on earlier 99-line code                            %
+% by Ole Sigmund (2001), Structural and Multidisciplinary Optimization,    %
+% Vol 21, pp. 120--127.                                                    %
+%                                                                          %
+% The code as well as a postscript version of the paper can be             %
+% downloaded from the web-site: http://www.topopt.dtu.dk                   %
+%                                                                          %
+% Disclaimer:                                                              %
+% The authors reserves all rights but do not guaranty that the code is     %
+% free from errors. Furthermore, we shall not be liable in any event       %
+% caused by the use of the program.                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

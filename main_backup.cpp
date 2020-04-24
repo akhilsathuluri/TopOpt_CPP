@@ -2,10 +2,9 @@
 This file implements the 88 line matlab code.
 Cite: Efficient topology optimization in MATLAB using 88 lines of code, E. Andreassen, A. Clausen, M. Schevenels, B. S. Lazarov and O. Sigmund, Struct Multidisc Optim, Volume 43, Issue 1, p.1 - 16, (2011).
 
-This paper uses the modified SIMP (Solid Isotropic Material with Penalisation) approach for optimisation.
-
-IF THE CODE DOESNT WORK AS EXPECTED CHECK ALL THE ASSIGNMENTS FROM LHS AND RHS
+This paper uses the modified SIMP (solid isotropic material with penalisation) approach for optimisation.
 */
+
 #include<stdio.h>
 #include<iostream>
 #include<Eigen/Dense>
@@ -13,16 +12,20 @@ IF THE CODE DOESNT WORK AS EXPECTED CHECK ALL THE ASSIGNMENTS FROM LHS AND RHS
 #include<Eigen/Core>
 #include<Eigen/SparseCore>
 #include<unsupported/Eigen/KroneckerProduct>
-// #include<math.h>
 #include<cmath>
 #include<algorithm>
+// Only for plotting
+// #include <vector>
+// #include <boost/tuple/tuple.hpp>
+// #include "gnuplot-iostream.h"
 
 using namespace Eigen;
 
 void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft);
 
 int main(int argc, char const *argv[]) {
-  top(60,20,0.5,3,1.5,1);
+  // top(30,10,0.5,3,1.5,1);
+  top(4,3,0.5,3,1.5,1);
   return 0;
 }
 
@@ -43,7 +46,7 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
   MatrixXd KE(8,8), tKE1(8,8), tKE2(8,8);
   tKE1 << A11, A12, A12.transpose(), A11;
   tKE2 << B11, B12, B12.transpose(), B11;
-  KE << 1/(1-pow(nu,2))/24*tKE1 + nu*tKE2;
+  KE << 1/(1-pow(nu,2))/24*(tKE1 + nu*tKE2);
   // Preparing indices for assembly
   ArrayXXi nodenrs((nelx+1)*(nely+1), 1);
   nodenrs.col(0) = ArrayXi::LinSpaced((nelx+1)*(nely+1), 0, (nelx+1)*(nely+1)-1);
@@ -57,13 +60,11 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
   tedofMat << 0, 1, 2*nely+small.array(), -2, -1;
   edofMat = tedofMat.replicate(nelx*nely, 1);
   edofMat = edofVec.replicate(1,8)+tedofMat.replicate(nelx*nely, 1);
-  // VectorXi iK(64*nelx*nely), jK(64*nelx*nely);
-  // kroneckerProduct(edofMat, MatrixXd::Ones(8,1)).eval()
-  MatrixXi tempiK(8*nelx*nely,8), tempjK(8*nelx*nely,8);
-  tempiK = kroneckerProduct(edofMat,MatrixXi::Constant(8,1,1)).eval();
-  tempjK = kroneckerProduct(edofMat,MatrixXi::Constant(1,8,1)).eval();
-  VectorXi iK(Map<VectorXi>(tempiK.data(), tempiK.rows()*tempiK.cols()));
-  VectorXi jK(Map<VectorXi>(tempjK.data(), tempjK.rows()*tempjK.cols()));
+  MatrixXi iK(8*nelx*nely,8), jK(8*nelx*nely,8);
+  iK = (kroneckerProduct(edofMat,MatrixXi::Constant(8,1,1)).eval()).transpose();
+  iK.resize(64*nelx*nely,1);
+  jK = (kroneckerProduct(edofMat,MatrixXi::Constant(1,8,1)).eval()).transpose();
+  jK.resize(64*nelx*nely,1);
   // Define loads and supports (assumes half MBB-beam )
   VectorXd F = VectorXd::Zero(2*(nelx+1)*(nely+1));
   F(1) = -1;
@@ -79,7 +80,6 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
   // Preparing filter
   // Creating patches of neighbours based on rmin
   VectorXi iH = VectorXi::Ones(nelx*nely*pow(2*(ceil(rmin)-1)+1, 2), 1);
-  // VectorXi iH = VectorXi::Ones(nelx*nely, 1);
   VectorXi jH = VectorXi::Ones(iH.size(), 1);
   VectorXd sH = VectorXd::Zero(iH.size(), 1);
   int k = -1, e1 = 0, e2 = 0;
@@ -114,54 +114,23 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
   VectorXd vKE(Map<VectorXd>(KE.data(), KE.cols()*KE.rows()));
   MatrixXd sK = MatrixXd::Constant(64, nelx*nely, 0);
   // Start iteration
-  MatrixXd K = MatrixXd::Constant(2*(nelx+1)*(nely+1), 2*(nelx+1)*(nely+1), 0);
   MatrixXd ce = MatrixXd::Zero(edofMat.rows(), 1);
-  double c = 0;
+  double c = 0.0;
   MatrixXd dc = MatrixXd::Constant(nely, nelx, 0);
   MatrixXd dv = MatrixXd::Ones(nely, nelx);
+  // Initialising iterations
   while (change > 0.01) {
     loop++;
-    // FE analysis
-  //   Ex = (Emin+(xPhys.array().pow(penal)*(E0-Emin))).matrix();
-  //   VectorXd vEx(Map<VectorXd>(Ex.data(), Ex.cols()*Ex.rows()));
-  //   sK = vKE*vEx.transpose();
-  //   VectorXd vsK(Map<VectorXd>(sK.data(), sK.cols()*sK.rows()));
-  //   for (size_t jj = 0; jj < iK.size(); jj++) {
-  //     K(iK(jj), jK(jj)) = sK(jj);
-  //   }
-  //   K = (K+K.transpose())/2;
-  //   // The following step needs Eigen 3.3.9 unstable update
-  //   U(freedof) = (K(freedof, freedof)).colPivHouseholderQr().solve(F(freedof));
-  //   // Objective function and sensitivity analysis
-  //   for (size_t ii = 0; ii < edofMat.rows(); ii++) {
-  //     ce(ii) = U(edofMat.row(ii)).transpose()*KE*U(edofMat.row(ii));
-  //   }
-  // // The matrix Ex is already computed above
-  // c = ce.transpose()*vEx;
-  // tdc = -penal*(E0-Emin)*xPhys.array().pow(penal-1);
-  // VectorXd vtdc(Map<VectorXd>(tdc.data(), tdc.cols()*tdc.rows()));
-  // dc = ce.array()*vtdc.array();
-  // // Filtering/Modification of sensitivities
-  // if (ft == 1) {
-  //   VectorXd vx(Map<VectorXd>(x.data(), x.cols()*x.rows()));
-  //   VectorXd mvx = vx;
-  //   // Removing zeros for division
-  //   mvx = (vx.array() < pow(10,-3)).select(pow(10,-3), vx);
-  //   dc = (((H*(vx.array()*dc.array()).matrix()).array())/(Hs.array())/(mvx.array())).matrix();
-  // }
-  // else if (ft == 2) {
-  //   dc = H*((dc.array()/Hs.array()).matrix());
-  //   dv = H*((dv.array()/Hs.array()).matrix());
-  // }
-    // UNCOMMENT FROM HERE TO WRITE LOOP CODE
     Ex = (Emin+(xPhys.array().pow(penal)*(E0-Emin))).matrix();
     VectorXd vEx(Map<VectorXd>(Ex.data(), Ex.cols()*Ex.rows()));
     sK = vKE*vEx.transpose();
     VectorXd vsK(Map<VectorXd>(sK.data(), sK.cols()*sK.rows()));
-    for (size_t jj = 0; jj < iK.size(); jj++) {
-      K(iK(jj), jK(jj)) = sK(jj);
+    // We need a new K matrix at each iteration
+    MatrixXd K = MatrixXd::Constant(2*(nelx+1)*(nely+1), 2*(nelx+1)*(nely+1), 0);
+    for (int jj = 0; jj < iK.size(); jj++) {
+      K(iK(jj), jK(jj)) += sK(jj);
     }
-    K = (K+K.transpose())/2;
+    K = (K+K.transpose())/2.0;
     // The following step needs Eigen 3.3.9 unstable update
     U(freedof) = (K(freedof, freedof)).colPivHouseholderQr().solve(F(freedof));
     // Resize the ce matrix into vector
@@ -193,9 +162,10 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
     dc.resize(nely, nelx);
     dv.resize(nely, nelx);
     // Optimality criteria update of design variables
-    double l1 = 0, l2 = pow(10, -9), move = 0.2, lmid = 0;
+    double l1 = 0.0, l2 = pow(10, 9), move = 0.2, lmid = 0.0;
     while ((l2-l1)/(l1+l2) > pow(10, -3)) {
       lmid = 0.5*(l1+l2);
+      // sqrt produces nan values
       xnew = (ArrayXXd::Zero(nely, nelx)).max((x.array()-move).max((ArrayXXd::Ones(nely, nelx)).min((x.array()+move).min(x.array()*(-dc.array()/dv.array()/lmid).sqrt()))));
       if (ft == 1) {
         xPhys = xnew;
@@ -218,8 +188,8 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
     x = xnew;
     // Print results
     printf("It.:%5i Obj.:%11.4f Vol.:%7.3f ch.:%7.3f\n",loop, c, xPhys.mean(), change);
-    // std::cout << "----------" << std::endl;
-    // std::cout << x << std::endl;
+    // Plotting after each iteration using gnuplot-iostream
   }
   // Add plotting later
+    // std::cout << x << std::endl<< std::endl;
 }
