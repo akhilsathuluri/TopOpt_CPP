@@ -5,6 +5,9 @@ Cite: Efficient topology optimization in MATLAB using 88 lines of code, E. Andre
 This paper uses the modified SIMP (solid isotropic material with penalisation) approach for optimisation.
 
 Compilation: time clang++ -Ofast main.cpp
+If using openmp parallelisation
+Compilation: time g++ -fopenmp -Ofast main.cpp
+Execution: OMP_NUM_THREADS=threads ./a.out
 Requires Eigen library
 
 Author: Akhil Sathuluri
@@ -30,8 +33,8 @@ using namespace Eigen;
 void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, int plot);
 
 int main(int argc, char const *argv[]) {
-  top(60,30,0.5,3,1.5,1,1);
-  // top(4,3,0.5,3,1.5,1,1);
+  // top(80,30,0.5,3,1.5,1,0);
+  top(120,40,0.5,3,1.5,1,1);
   return 0;
 }
 
@@ -74,9 +77,10 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
   // Define loads and supports (assumes half MBB-beam )
   VectorXd F = VectorXd::Zero(2*(nelx+1)*(nely+1));
   F(1) = -1;
+  // std::cout << F(freedof) << std::endl;
   // Update all these matrices to sparse in the next iteration
-  // SparseMatrix<double> sF;
-  // sF = (F.matrix()).sparseView();
+  // SparseMatrix<double> F;
+  // F = (sF.matrix()).sparseView();
   VectorXd U = VectorXd::Zero(2*(nelx+1)*(nely+1));
   ArrayXi alldof = ArrayXi::LinSpaced(2*(nelx+1)*(nely+1), 0, 2*(nelx+1)*(nely+1)-1);
   ArrayXi fixeddof(nely+2);
@@ -203,7 +207,11 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
       file.close();
     }
   }
-    // Leave the final result plotted
-    std::cout << "Displaying optimal solution" << std::endl;
-    system("./callplot_final.sh");
+  std::cout << "Saving optimal solution ..." << std::endl;
+  std::ofstream file("sol.txt", std::ios::trunc);
+  file << (1-xPhys.array()).matrix() << std::endl << std::endl;
+  // Leave the final result plotted
+  std::cout << "Displaying optimal solution ..." << std::endl;
+  system("./callplot_final.sh");
+  file.close();
 }

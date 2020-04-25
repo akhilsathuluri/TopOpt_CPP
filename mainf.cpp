@@ -5,6 +5,9 @@ Cite: Efficient topology optimization in MATLAB using 88 lines of code, E. Andre
 This paper uses the modified SIMP (solid isotropic material with penalisation) approach for optimisation.
 
 Compilation: time clang++ -Ofast main.cpp
+If using openmp parallelisation
+Compilation: time g++ -fopenmp -Ofast main.cpp
+Execution: OMP_NUM_THREADS=threads ./a.out
 Requires Eigen library
 
 Author: Akhil Sathuluri
@@ -30,8 +33,8 @@ using namespace Eigen;
 void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, int plot);
 
 int main(int argc, char const *argv[]) {
-  top(60,30,0.5,3,1.5,1,1);
-  // top(4,3,0.5,3,1.5,1,1);
+  top(30,10,0.5,3,1.5,1,0);
+  // top(300,100,0.5,3,1.5,1,0);
   return 0;
 }
 
@@ -43,13 +46,13 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
   Emin = pow(10,-9);
   nu = 0.3;
   // Element stiffness matrix
-  MatrixXd A11(4,4), A12(4,4), B11(4,4), B12(4,4);
+  MatrixXf A11(4,4), A12(4,4), B11(4,4), B12(4,4);
   A11 << 12,3,-6,-3,3,12,3,0,-6,3,12,-3,-3,0,-3,12;
   A12 << -6,-3,0,3,-3,-6,-3,-6,0,-3,-6,3,3,-6,3,-6;
   B11 << -4,3,-2,9,3,-4,-9,4,-2,-9,-4,-3,9,4,-3,-4;
   B12 << 2,-3,4,-9,-3,2,9,-2,4,9,2,3,-9,-2,3,2;
   // Four node bi-linear finite element
-  MatrixXd KE(8,8), tKE1(8,8), tKE2(8,8);
+  MatrixXf KE(8,8), tKE1(8,8), tKE2(8,8);
   tKE1 << A11, A12, A12.transpose(), A11;
   tKE2 << B11, B12, B12.transpose(), B11;
   KE << 1/(1-pow(nu,2))/24*(tKE1 + nu*tKE2);
@@ -72,12 +75,13 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
   jK = (kroneckerProduct(edofMat,MatrixXi::Constant(1,8,1)).eval()).transpose();
   jK.resize(64*nelx*nely,1);
   // Define loads and supports (assumes half MBB-beam )
-  VectorXd F = VectorXd::Zero(2*(nelx+1)*(nely+1));
+  VectorXf F = VectorXf::Zero(2*(nelx+1)*(nely+1));
   F(1) = -1;
+  // std::cout << F(freedof) << std::endl;
   // Update all these matrices to sparse in the next iteration
-  // SparseMatrix<double> sF;
-  // sF = (F.matrix()).sparseView();
-  VectorXd U = VectorXd::Zero(2*(nelx+1)*(nely+1));
+  // SparseMatrix<double> F;
+  // F = (sF.matrix()).sparseView();
+  VectorXf U = VectorXf::Zero(2*(nelx+1)*(nely+1));
   ArrayXi alldof = ArrayXi::LinSpaced(2*(nelx+1)*(nely+1), 0, 2*(nelx+1)*(nely+1)-1);
   ArrayXi fixeddof(nely+2);
   fixeddof.head(nely+1) = VectorXi::LinSpaced(nely+1, 0, 2*(nely+1));
@@ -87,7 +91,7 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
   // Creating patches of neighbours based on rmin
   VectorXi iH = VectorXi::Ones(nelx*nely*pow(2*(ceil(rmin)-1)+1, 2), 1);
   VectorXi jH = VectorXi::Ones(iH.size(), 1);
-  VectorXd sH = VectorXd::Zero(iH.size(), 1);
+  VectorXf sH = VectorXf::Zero(iH.size(), 1);
   int k = -1, e1 = 0, e2 = 0;
   for (int i1 = 0; i1 < nelx; i1++) {
     for (int j1 = 0; j1 < nely; j1++) {
@@ -104,35 +108,35 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
     }
   }
   // Similar to the sparse function in MATLAB
-  MatrixXd H = MatrixXd::Zero(nelx*nely, nelx*nely);
+  MatrixXf H = MatrixXf::Zero(nelx*nely, nelx*nely);
   for (int ii = 0; ii < iH.size(); ii++) {
     H(iH(ii), jH(ii)) +=  sH(ii);
   }
-  VectorXd Hs(H.rows());
+  VectorXf Hs(H.rows());
   Hs = H.rowwise().sum();
   // Initialise iteration
-  MatrixXd x = MatrixXd::Constant(nely, nelx, volfrac);
-  MatrixXd xPhys = x;
-  MatrixXd xnew = MatrixXd::Constant(nely, nelx, 0);
-  MatrixXd Ex = MatrixXd::Constant(nely, nelx, 0);
+  MatrixXf x = MatrixXf::Constant(nely, nelx, volfrac);
+  MatrixXf xPhys = x;
+  MatrixXf xnew = MatrixXf::Constant(nely, nelx, 0);
+  MatrixXf Ex = MatrixXf::Constant(nely, nelx, 0);
   int loop = 0;
   double change = 1;
-  VectorXd vKE(Map<VectorXd>(KE.data(), KE.cols()*KE.rows()));
-  MatrixXd sK = MatrixXd::Constant(64, nelx*nely, 0);
+  VectorXf vKE(Map<VectorXf>(KE.data(), KE.cols()*KE.rows()));
+  MatrixXf sK = MatrixXf::Constant(64, nelx*nely, 0);
   // Start iteration
-  MatrixXd ce = MatrixXd::Zero(edofMat.rows(), 1);
+  MatrixXf ce = MatrixXf::Zero(edofMat.rows(), 1);
   double c = 0.0;
-  MatrixXd dc = MatrixXd::Constant(nely, nelx, 0);
-  MatrixXd dv = MatrixXd::Ones(nely, nelx);
+  MatrixXf dc = MatrixXf::Constant(nely, nelx, 0);
+  MatrixXf dv = MatrixXf::Ones(nely, nelx);
   // Initialising iterations
   while (change > 0.01) {
     loop++;
     Ex = (Emin+(xPhys.array().pow(penal)*(E0-Emin))).matrix();
-    VectorXd vEx(Map<VectorXd>(Ex.data(), Ex.cols()*Ex.rows()));
+    VectorXf vEx(Map<VectorXf>(Ex.data(), Ex.cols()*Ex.rows()));
     sK = vKE*vEx.transpose();
-    VectorXd vsK(Map<VectorXd>(sK.data(), sK.cols()*sK.rows()));
+    VectorXf vsK(Map<VectorXf>(sK.data(), sK.cols()*sK.rows()));
     // We need a new K matrix at each iteration
-    MatrixXd K = MatrixXd::Constant(2*(nelx+1)*(nely+1), 2*(nelx+1)*(nely+1), 0);
+    MatrixXf K = MatrixXf::Constant(2*(nelx+1)*(nely+1), 2*(nelx+1)*(nely+1), 0);
     for (int jj = 0; jj < iK.size(); jj++) {
       K(iK(jj), jK(jj)) += sK(jj);
     }
@@ -154,8 +158,8 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
     dv.resize(nely*nelx,1);
     // Filtering/Modification of sensitivities
     if (ft == 1) {
-      VectorXd vx(Map<VectorXd>(x.data(), x.cols()*x.rows()));
-      VectorXd mvx = vx;
+      VectorXf vx(Map<VectorXf>(x.data(), x.cols()*x.rows()));
+      VectorXf mvx = vx;
       // Removing zeros for division
       mvx = (vx.array() < pow(10,-3)).select(pow(10,-3), vx);
       dc = ((H*(vx.array()*dc.array()).matrix()).array())/Hs.array()/mvx.array();
@@ -172,7 +176,7 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
     while ((l2-l1)/(l1+l2) > pow(10, -3)) {
       lmid = 0.5*(l1+l2);
       // sqrt produces nan values
-      xnew = (ArrayXXd::Zero(nely, nelx)).max((x.array()-move).max((ArrayXXd::Ones(nely, nelx)).min((x.array()+move).min(x.array()*(-dc.array()/dv.array()/lmid).sqrt()))));
+      xnew = (ArrayXXf::Zero(nely, nelx)).max((x.array()-move).max((ArrayXXf::Ones(nely, nelx)).min((x.array()+move).min(x.array()*(-dc.array()/dv.array()/lmid).sqrt()))));
       if (ft == 1) {
         xPhys = xnew;
       }
@@ -203,7 +207,11 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
       file.close();
     }
   }
-    // Leave the final result plotted
-    std::cout << "Displaying optimal solution" << std::endl;
-    system("./callplot_final.sh");
+  std::cout << "Saving optimal solution ..." << std::endl;
+  std::ofstream file("sol.txt", std::ios::trunc);
+  file << (1-xPhys.array()).matrix() << std::endl << std::endl;
+  // Leave the final result plotted
+  std::cout << "Displaying optimal solution ..." << std::endl;
+  system("./callplot_final.sh");
+  file.close();
 }
