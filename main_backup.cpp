@@ -3,6 +3,10 @@ This file implements the 88 line matlab code.
 Cite: Efficient topology optimization in MATLAB using 88 lines of code, E. Andreassen, A. Clausen, M. Schevenels, B. S. Lazarov and O. Sigmund, Struct Multidisc Optim, Volume 43, Issue 1, p.1 - 16, (2011).
 
 This paper uses the modified SIMP (solid isotropic material with penalisation) approach for optimisation.
+
+Compilation: time clang++ -Ofast main.cpp
+
+Author: Akhil Sathuluri
 */
 
 #include<stdio.h>
@@ -14,22 +18,21 @@ This paper uses the modified SIMP (solid isotropic material with penalisation) a
 #include<unsupported/Eigen/KroneckerProduct>
 #include<cmath>
 #include<algorithm>
-// Only for plotting
-// #include <vector>
-// #include <boost/tuple/tuple.hpp>
-// #include "gnuplot-iostream.h"
+// For plotting
+#include <fstream>
+#include<stdlib.h>
 
 using namespace Eigen;
 
-void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft);
+void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, int plot);
 
 int main(int argc, char const *argv[]) {
-  // top(30,10,0.5,3,1.5,1);
-  top(4,3,0.5,3,1.5,1);
+  top(60,30,0.5,3,1.5,1,1);
+  // top(4,3,0.5,3,1.5,1,1);
   return 0;
 }
 
-void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
+void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, int plot){
   // Define required variables
   double E0, Emin, nu;
   // Define material properties
@@ -188,8 +191,18 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft){
     x = xnew;
     // Print results
     printf("It.:%5i Obj.:%11.4f Vol.:%7.3f ch.:%7.3f\n",loop, c, xPhys.mean(), change);
-    // Plotting after each iteration using gnuplot-iostream
+    // save results
+    if(plot != 0){
+      std::ofstream file("sol.txt", std::ios::trunc);
+      file << (1-xPhys.array()).matrix() << std::endl << std::endl;
+      // write code to read from this file and plot
+      system("./callplot.sh");
+      file.close();
+    }
   }
   // Add plotting later
-    // std::cout << x << std::endl<< std::endl;
+    // std::cout << (1-xPhys.array()).matrix() << std::endl<< std::endl;
+    // Leave the final result plotted
+    std::cout << "Displaying optimal solution" << std::endl;
+    system("./callplot_final.sh");
 }

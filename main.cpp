@@ -5,8 +5,11 @@ Cite: Efficient topology optimization in MATLAB using 88 lines of code, E. Andre
 This paper uses the modified SIMP (solid isotropic material with penalisation) approach for optimisation.
 
 Compilation: time clang++ -Ofast main.cpp
+Requires Eigen library
 
 Author: Akhil Sathuluri
+
+Next update: Change dense matrices to sparse
 */
 
 #include<stdio.h>
@@ -200,8 +203,6 @@ void top(int nelx, int nely, double volfrac, double penal, double rmin, int ft, 
       file.close();
     }
   }
-  // Add plotting later
-    // std::cout << (1-xPhys.array()).matrix() << std::endl<< std::endl;
     // Leave the final result plotted
     std::cout << "Displaying optimal solution" << std::endl;
     system("./callplot_final.sh");
