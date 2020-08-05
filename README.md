@@ -1,4 +1,4 @@
-# TopOpt_CPP
+# Topology Optimisation in C++
 This repository is a single core implementation of the 88 line topology optimisation code[1] in C++ using the Eigen library. 
 
 ## Usage
